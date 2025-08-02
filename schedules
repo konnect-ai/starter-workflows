@@ -1,0 +1,54 @@
+name: Schedules
+
+on:
+  schedule:
+    # Tous les lundis à 09:00 CET (CEST/GMT+2)
+    - cron:  '0 7 * * 1'
+    # Tous les jours à 08:00 CET
+    - cron:  '6 6 * * *'
+    # Tous les vendredis à 18:00 CET
+    - cron:  '16 16 * * 5'
+
+jobs:
+  weekly_tasks:
+    runs-on: ubuntu-latest
+    env:
+      WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }} 
+    steps:
+      - name: Rappel hebdo tâches à faire & continuer
+        run: |
+          curl -X POST "$WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "type": "confirmation",
+              "cmd": "All",
+              "content": "🔄 Tâches à faire & à continuer – pensez à mettre à jour vos blocs"
+            }'
+  daily_koko:
+    runs-on: ubuntu-latest
+    env:
+      WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+    steps:
+      - name: Rappel quotidien KOKO 
+        run: |
+          curl -X POST "$WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "type": "confirmation",
+              "cmd": "All",
+              "content": "🔔 KOKO : votre briefing matinal est prêt !"
+            }'
+  weekly_backup:
+    runs-on: ubuntu-latest
+    env:
+      WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+    steps:
+      - name: Rappel backup hebdo
+        run: |
+          curl -X POST "$WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "type": "confirmation",
+              "cmd": "Automate",
+              "content": "💾 N’oubliez pas le backup mensuel !"
+            }'
